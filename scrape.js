@@ -113,14 +113,15 @@ async function run() {
     for (const id of backfillIds) {
       const detail = backfillMap[id];
       if (!detail) continue;
+      const bookingDate = roster[id].bookingDate || earliestArrestDate(detail.charges);
       roster[id] = {
         ...roster[id],
         charges: detail.charges,
-        bookingDate: roster[id].bookingDate || earliestArrestDate(detail.charges),
+        bookingDate,
         hasDetail: true,
       };
       const logEntry = log.find(e => e.idnum === id);
-      if (logEntry) Object.assign(logEntry, { charges: detail.charges, hasDetail: true });
+      if (logEntry) Object.assign(logEntry, { charges: detail.charges, bookingDate, hasDetail: true });
     }
     console.log('  Backfill done.');
   }
